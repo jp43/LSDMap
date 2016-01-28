@@ -89,6 +89,7 @@ algorithm based on LSDMap. For an introduction to DM-d-MD, see the paper
 J.Preto and C. Clementi, Phys. Chem. Chem. Phys., 2014, 16, 19181-19191.
 
 DM-d-MD jobs are run through python scripts. For examples, see the examples/dmdmd_ala12 and examples/dmdmd directories.
+Other examples, using AMBER as the MD engine as opposed to GROMACS, are available in the examples folder that comes with Extasy wrappers (https://bitbucket.org/claughton/wrappers)
 
 
 Prerequisites
@@ -111,7 +112,9 @@ executing the command:
 
 within the specified folder.
 Note: it may be wise to issue the command:
+
         setenv GMX_MAXBACKUP -1
+
 first.
 
 
