@@ -1,0 +1,7 @@
+To run this example, type:
+
+lsdmap -f config.ini -c aladip_1000.gro -t aladip.gro
+
+Or if you have MPI, something like:
+
+mpirun -n 4 lsdmap -f config.ini -c aladip_1000.gro -t aladip.gro

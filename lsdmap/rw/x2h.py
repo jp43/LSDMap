@@ -1,3 +1,4 @@
+# x2h: stripped-down version of the MDPlus Cofasu library.
 import numpy as np
 import mdtraj as mdt
 import tempfile
@@ -99,7 +100,7 @@ class Fasu:
         u = mdt.load(self.topology)
         sel = u.top.select(self.selection)
         ext = os.path.splitext(self.trajectory[0])[1].lower()
-        if not ext in ['gro', 'pdb']:
+        if not ext in ['.gro', '.pdb']:
             u = mdt.load(self.trajectory, top=self.topology, atom_indices=sel)
         else:
             u = mdt.load(self.trajectory, atom_indices=sel)
