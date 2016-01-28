@@ -4,15 +4,15 @@ LSDMap
 LSDMap package is used to compute Locally Scaled Diffusion Map. 
 Typical usage is to call the "lsdmap" script:
 
-	lsdmap -f <configuration_file> -c <structure_file> <other_options>
+	lsdmap -f <configuration_file> -c <structure_file> -t <topology_file> <other_options>
 
 or using MPI:
 
-	mpiexec -n <number_of_processors> lsdmap -f <configuration_file> -c <structure_file> <other_options>
+	mpiexec -n <number_of_processors> lsdmap -f <configuration_file> -c <structure_file> -t <topology_file> <other_options>
 
 A typical example of configuration file is ./examples/lsdmap/config.ini
 The structure file should contain all the configurations needed to compute
-LSDMap. After execution of the script, a .ev and a .eg file should have
+LSDMap (e.g., a multi-model .gro file). After execution of the script, a .ev and a .eg file should have
 been generated containing the eigenvectors and eigenvalues, respectively. 
 
 See the paper W. Zheng, M. A. Rohrdanz, M. Maggioni and C. Clementi, J. Chem. Phys., 2011, 134, 144109 for more information on how LSDMap works.
@@ -31,6 +31,16 @@ packages installed:
 * mpi4py; version 1.0 or larger
 
 * cython; version 0.20 or later
+
+If not already available, installing LSDMap will automatically install:
+
+* MDTraj
+
+* h5py
+
+* dask
+
+* cloudpickle
 
 Version 2.6.x or 2.7.x of python should be used. 
 
@@ -60,7 +70,7 @@ which contains 1000 configurations of alanine dipeptide in vacuum and
 an example of configuration file (.ini) that should be used to compute
 LSDMap. To test the program, simply type in this folder:
 
-	lsdmap -f config.ini -c aladip_1000.gro
+	lsdmap -f config.ini -c aladip_1000.gro -t aladip.gro
 
 After execution, a file ".ev" and a file ".eg" must have been generated.
 They contain the eigenvectors and eigenvalues of the Fokker-Planck operator,
@@ -73,7 +83,7 @@ and so on.
 
 LSDMap can be computed using MPI using a command similar to:
 
-	mpiexec -n <number_of_processors> lsdmap -f <configuration_file> -c <structure_file>
+	mpiexec -n <number_of_processors> lsdmap -f <configuration_file> -c <structure_file> -t <topology_file>
 
 For more information on lsdmap command, simply type:
 
@@ -88,15 +98,8 @@ DM-d-MD (Diffusion-Map directed Molecular Dynamics) is an adaptive sampling
 algorithm based on LSDMap. For an introduction to DM-d-MD, see the paper
 J.Preto and C. Clementi, Phys. Chem. Chem. Phys., 2014, 16, 19181-19191.
 
-Besides LSDMap, DM-d-MD requires GROMACS to be correctly installed.
-
-DM-d-MD is automatically installed when installing LSDMap via the command:
-
-        python setup.py install
-
-A typical usage of DM-d-MD is to call:
-
-	dmdmd -f <configuration_file>
+DM-d-MD jobs are run through python scripts. For examples, see the examples/dmdmd_ala12 and examples/dmdmd directories.
+Other examples, using AMBER as the MD engine as opposed to GROMACS, are available in the examples folder that comes with Extasy wrappers (https://bitbucket.org/claughton/wrappers)
 
 
 Prerequisites
@@ -105,19 +108,24 @@ Prerequisites
 In order to use DM-d-MD, it is required that GROMACS has been correctly
 installed and that "grompp" and "mdrun" commands are working properly
 for a serial utilization. If not, please visit http://www.gromacs.org/.
+The ExTASY wrappers python library is also required (https://bitbucket.org/claughton/wrappers)
 
 
 Testing
 -------
 
-The Folder examples/dmdmd contains an example of DM-d-MD configuration
-file (dmdmd.ini) as well as files required to run GROMACS MD simulations
+The Folder examples/dmdmd contains an example of DM-d-MD python script (rundmdmd.py) as well as files required to run GROMACS MD simulations
 for the photoactive yellow protein (PYP). DM-d-MD can be launched by 
 executing the command:
 
-	dmdmd -f dmdmd.ini
+	python rundmdmd.py
 
 within the specified folder.
+Note: it may be wise to issue the command:
+
+        setenv GMX_MAXBACKUP -1
+
+first.
 
 
 Diffusion-Map Sampling
