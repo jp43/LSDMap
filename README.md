@@ -32,6 +32,16 @@ packages installed:
 
 * cython; version 0.20 or later
 
+If not already available, installing LSDMap will automatically install:
+
+* MDTraj
+
+* h5py
+
+* dask
+
+* cloudpickle
+
 Version 2.6.x or 2.7.x of python should be used. 
 
 
