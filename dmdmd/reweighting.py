@@ -18,11 +18,11 @@ class ReweightingStep(object):
     def initialize(self, args):
 
         # read structure file
-        struct_file = reader.open(args.struct_file, velocities=True)
-        self.struct_filename = struct_file.filename
-        self.coords = struct_file.readlines()
+        with open(args.struct_file[0]) as f:
+        
+            self.coords = f.readlines()
 
-        self.npoints = self.coords.shape[0]
+        self.npoints = len(self.coords)
 
         # read number of copies
         ncfile = reader.open(args.ncfile)
@@ -118,9 +118,10 @@ class ReweightingStep(object):
     def save(self, args):
 
         # save new coordinates
-        format_output_file = os.path.splitext(args.output_file[0])[1]
-        struct_file_writer = writer.open(format_output_file, pattern=args.struct_file[0])
-        struct_file_writer.write(self.new_coords, args.output_file[0])
+        struct_file_writer = open(args.output_file[0], 'w')
+        for s in self.new_coords:
+            struct_file_writer.write(s)
+        struct_file_writer.close()
 
         # save wfile
         wfile_writer = writer.open('.w')
@@ -202,6 +203,8 @@ class ReweightingStep(object):
 
         self.new_coords = np.array(new_coords)
         self.new_weights = np.array(new_weights)
+         
+        print "number of simulations in next step:", self.new_weights.shape[0]
 
         sum_old_weights=int(round(np.sum(self.weights)))
         sum_new_weights=int(round(np.sum(self.new_weights)))
