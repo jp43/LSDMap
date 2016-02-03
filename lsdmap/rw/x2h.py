@@ -6,7 +6,6 @@ import os
 import h5py
 import dask.bag as db
 import dask.array as da
-from MDPlus.core import fastfitting
 CHUNKS = 10000
 
 def pib(coords, box):
@@ -201,68 +200,6 @@ class Cofasu:
 
     def shape(self):
         return self.x.shape
-
-    def reset(self):
-        '''
-        Removes any alignment from the trajectories
-        '''
-        xs = [da.from_array(h['x'], chunks=CHUNKS) for h in self.hlist]
-        self.x = da.concatenate(xs)
-
-    def align(self, target=None, weighted=False, procrustes=False,
-    error=0.0001, maxcyc=10):
-        '''
-        Aligns the frames in atrajectory to some reference structure, with
-        optional mass-weighting.
-
-        Arguments:
-            target:
-            If given, a reference structure to fir to, as a [N,3] numpy array.
-
-            weighted:
-            If specified, mass-weighted fitting is done.
-
-            procrustes:
-            If specified , procrustes iterative fitting is done to convergence.
-
-            error:
-            Defines the target error for the procrustes fit.
-
-            maxcyc:
-            Defines the maximum number of iterations for the procrustes method.
-        '''
-
-        self.reset()
-        if target is None:
-            targ = self.x[0]
-        else:
-            targ = da.from_array(target, chunks = CHUNKS)
-
-        if weighted:
-            weights = self.masses
-        else:
-            weights = np.ones_like(self.masses)
-        weights = da.from_array(np.stack([weights,] * 3).T, chunks=CHUNKS)
-
-        self.x = da.map_blocks(fastfitting.fitted_traj, self.x, targ, weights)
-        if not procrustes:
-            return
-
-        avg = self.x.mean(axis=0)
-        err = avg - targ
-        err = (err*err).mean().compute()
-        cycle = 1
-        while err > error and cycle < maxcyc:
-            target = avg
-            self.reset()
-            self.x = da.map_blocks(fastfitting.fitted_traj, self.x, target, weights)
-            avg = self.x.mean(axis=0).compute()
-            avg = da.from_array(avg, chunks=CHUNKS)
-            err = avg - target
-            err = (err*err).mean().compute()
-            cycle += 1
-        print 'Procrustes converged in {} cycles with error {}'.format(cycle,
-        err)
 
     def write(self, filename, coordinates=None):
         '''
