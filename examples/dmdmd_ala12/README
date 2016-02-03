@@ -1,0 +1,7 @@
+Example DMDMD run on alanine12. Five cycles, 50 replicas per cycle.
+
+To run:
+
+setenv GMX_MAXBACKUP -1
+python rundmdmd.py
+

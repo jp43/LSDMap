@@ -44,6 +44,14 @@ def check_import(pkgname, pkgver):
                 "You need %(pkgname)s %(pkgver)s or greater to run lsdmap!"
                 % {'pkgname': pkgname, 'pkgver': pkgver} )
     else:
+        try:
+            ver = mod.__version__
+
+        except AttributeError:
+            mod.__version__ = mod.version.version
+
+        if 'b' in mod.__version__:
+            mod.__version__ = mod.__version__[:mod.__version__.index('b')]
         if len(mod.__version__)>6:
                 mod_ver = mod.__version__[:6]
         else:
@@ -68,6 +76,10 @@ check_import('numpy', min_numpy_version)
 check_import('scipy', min_scipy_version)
 check_import('mpi4py', min_mpi4py_version)
 check_import('cython', min_cython_version)
+check_import('mdtraj', '0.11')
+check_import('h5py', '2.4')
+check_import('dask', '0.7.6')
+check_import('cloudpickle', '0.1.1')
 
 import numpy as np
 try:
@@ -92,10 +104,10 @@ ext_modules = [Extension(
 
 setup(name='lsdmap',
       packages=['lsdmap', 'lsdmap.mpi', 'lsdmap.rw', 'lsdmap.util', 'lsdmap.rbf', 'dmdmd', 'dmdmd.tools'],
-      scripts = ['bin/lsdmap','bin/dmdmd', 'bin/rbffit','bin/reweighting','bin/selection','bin/p_mdrun'],
+      scripts = ['bin/lsdmap', 'bin/rbffit','bin/reweighting','bin/selection','bin/p_mdrun'],
       ext_modules = cythonize(ext_modules),
       cmdclass = cmdclass,
       license='LICENSE.txt',
       description='LSDMap package',
-      long_description=open('README.md').read(),
+      long_description=open('README.md').read()
      )
